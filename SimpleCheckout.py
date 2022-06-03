@@ -1,5 +1,6 @@
 from typing import List
 import collections
+import sys
 
 class SimpleCheckout:
 
@@ -68,6 +69,17 @@ special_B = [0, 2, 1.25]
 special_C = [1, 3, 1]
 SKU.set_special_prices(special_A, special_B, special_C)
 
-test_input = ['A', 'B', 'B', 'C', 'C', 'C', 'C']
-price = SKU.calculate_price(test_input)
-print(price)
+# Move command line arguments into items array
+n = len(sys.argv) - 1
+items = []
+for i in range(1, n):
+    items.append(sys.argv[i])
+
+price = SKU.calculate_price(items)
+
+# Last command line argument is our expected price, below we test if our program has the
+# expected output
+if (price == float(sys.argv[n])):
+    print(str(items) + " " + str(price) + " PASS")
+else:
+    print(str(items) + " " + str(price) + " FAIL")
