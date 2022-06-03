@@ -1,3 +1,6 @@
+from typing import List
+import collections
+
 class SimpleCheckout:
 
     # An array of size 3 is used to describe the special offer
@@ -21,6 +24,38 @@ class SimpleCheckout:
         self.__special_price_A = special_price_A
         self.__special_price_B = special_price_B
         self.__special_price_C = special_price_C
+    
+    def calculate_price(self, items: List[str]):
+        # Helper method to calculate the total cost per item label
+        def calculate(price, special_price, count) -> float:
+            if (count == 0):
+                return 0
+            
+            # No special offer for item
+            if (special_price[1] == 0 or special_price[2] == 0):
+                return count * price
+            
+            # Multi priced offer
+            if (special_price[0] == 0):
+                discounted_items = count // special_price[1]
+                remainder = count % special_price[1]
+                return (discounted_items * special_price[2]) + (remainder * price)
+            # Buy n get 1 free
+            else:
+                discounted_items = count // (special_price[1] + 1)
+                return (count - discounted_items) * price
+            
+        # Count the number of each item
+        counter = collections.Counter()
+        for i in items:
+            counter[i] += 1
+        
+        A_price = calculate(self.__price_A, self.__special_price_A, counter['A'])
+        B_price = calculate(self.__price_B, self.__special_price_B, counter['B'])
+        C_price = calculate(self.__price_C, self.__special_price_C, counter['C'])
+
+        return A_price + B_price + C_price
+
 
 SKU = SimpleCheckout()
 
@@ -32,3 +67,7 @@ special_A = [0, 0, 0]
 special_B = [0, 2, 1.25]
 special_C = [1, 3, 1]
 SKU.set_special_prices(special_A, special_B, special_C)
+
+test_input = ['A', 'B', 'B', 'C', 'C', 'C', 'C']
+price = SKU.calculate_price(test_input)
+print(price)
